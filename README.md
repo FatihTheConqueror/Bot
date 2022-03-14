@@ -5,7 +5,9 @@ Hi, I'm Fatih. I made a discord bot that archiving messeages to specific channel
 # How to install:
 You can download code as zip or you can try to terminal "pip install https://github.com/FatihTheConqueror/Discord-Archive-Bot"
 
-After that, you have to add your bot's token on the code
+After that, you have to add your bot's token on the code. You can get your bot's token in discord developer portal
+
+![alt text](https://i.hizliresim.com/3jfpiye.png)
 
 ![alt text](https://i.hizliresim.com/gdmryo2.png)
 

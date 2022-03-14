@@ -1,6 +1,15 @@
 Hi, I'm Fatih. I made a discord bot that archiving messeages to specific channel with emoji system.
 
-You can use this bot on your servers. First of all you have to add your bot token to use.
+
+
+# How to install:
+You can download code as zip or you can try to terminal "pip install https://github.com/FatihTheConqueror/Discord-Archive-Bot"
+
+After that, you have to add your bot's token on the code
+
+![alt text](https://i.hizliresim.com/gdmryo2.png)
+
+Then you have to connect your bot to your server. After that, you can run code and you can use the bot
 
 # **Archive system:**
 

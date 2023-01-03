@@ -1,75 +1,91 @@
+import os
+def file_create(Bot):
+    for guild in Bot.guilds:
+        if not os.path.exists(f"guilds/{guild.id}"):
+            os.makedirs(f"guilds/{guild.id}")
+            file = open(f"guilds/{guild.id}/channels.txt", "w")
+            file.close()
+            file1 = open(f"guilds/{guild.id}/command_channel.txt", "w")
+            file1.close()
 
-#command channel
-file=open("command_channel.txt","r")
-command_channel_list=file.readlines()
-file.close()
+
+def command_channel_list(guild_id):
+    file = open(f"guilds/{guild_id}/command_channel.txt", "r")
+    command_channel_list = file.readlines()
+    file.close()
+    return command_channel_list
+
 
 #channel list
-file1 = open("channels.txt", "r", encoding="utf8")
-channel_list = file1.read().split("\n")
-for i in range(0, len(channel_list)):
-    channel_list[i] = channel_list[i].split(",")
-file1.close()
-if channel_list[0] == [""]:
-    del channel_list[0]
-for i in range(0, len(channel_list)):
-    if channel_list[i] == [""]: # if channels.txt file empty, we have to do this for bot working.
-        del channel_list[i]  # in here we made a list by matris format.
-for i in range(0, len(channel_list)):
+def channel_list(guild_id):
+    file1 = open(f"guilds/{guild_id}/channels.txt", "r", encoding="utf8")
+    channel = file1.read().split("\n")
 
-    channel_list[i][0]=int(channel_list[i][0])
-    channel_list[i][1] = int(channel_list[i][1])
-    channel_list[i][2] = int(channel_list[i][2])  # in here we made a channel list by matris format.
+    file1.close()
 
-# here we're gonna add command channel id with a function
-def mention_check(arg):
-    if len(arg) == 21 and arg[0] == "<" and arg[1] == "#" and arg.endswith(">"):
-        return True
-    else:
-        return False
+    for i in range(len(channel)):
+        if channel[i] == "":
+            del channel[i]
 
-def command_channel_set(arg1):
-    command_channel_id = ""
-    if mention_check(arg1)==True:
-        for i in arg1:
-            if i == "<" or i == "#" or i == ">":
-                pass
-            else:
-                command_channel_id += i #discord is not givind id only with integers numbers. so we have to do that.
-    file = open("command_channel.txt", "w")
-    file.write(command_channel_id) #writing command channel id to our command channel text file
+    for i in range(len(channel)):
+        channel[i] = channel[i].split(",")
+    try:
+        for i in range(len(channel)):
+            channel[i][0] = int(channel[i][0])
+            channel[i][1] = int(channel[i][1])
+            channel[i][2] = int(channel[i][2])
+    except:
+        pass
+
+
+
+    return channel
+
+
+
+
+
+def command_channel_set(arg1,guild_id):
+
+
+    file = open(f"guilds/{guild_id}/command_channel.txt", "w")
+    file.write(str(arg1)) #writing command channel id to our command channel text file
     file.close()
-# discord is not giving id only with numbers. so, we define a function to do this.
-def get_channels_id(arg): #discord is not givind id only with integers numbers. so we have to do that.
-    arg0=""
-    for i in arg:
-        if i.isdigit(): #here we made a checks that string only takes int numbers.
-            arg0 = arg0 + i
-    return arg0
+
+
 
 #define a function that adding parametres to txt file
-def add_channel(arg1,arg2,arg3,arg4):
-
-    arg1 = get_channels_id(arg1) #getting channels id with function
-    arg2 = get_channels_id(arg2)
+def add_channel1(arg1,arg2,arg3,arg4,guild_id):
+    channel_lists = channel_list(guild_id)
 
 
-    channel_list.append([arg1,arg2,arg3,arg4]) #adding channels by a list to matris list
+
+    channel_lists.append([arg1,arg2,arg3,arg4]) #adding channels by a list to matris list
+    print(f"bak {channel_lists}")
 
 
-    file =open("channels.txt","w",encoding="utf8")
-    for i in channel_list:
-        for j in range(0,4):
-            if j!=3:
-                file.write(str(i[j]) + ",")
-            if j==3:
-                file.write(str(i[j]) + "\n") #adding channel to txt file
+    file =open(f"guilds/{guild_id}/channels.txt","w",encoding="utf8")
+    if len(channel_lists) != 0:
+        for i in channel_lists:
+            for j in range(0, 4):
+                if j != 3:
+                    file.write(str(i[j]) + ",")
+                if j == 3:
+                    file.write(str(i[j]) + "\n")  # adding channel to txt file
+    else:
+        file.write(f"{str(arg1)},{str(arg2)},{str(arg3)},{str(arg4)}")
+
+
+
     file.close()
 
-def delete_channels(arg1):#deleting channel function
-    del channel_list[arg1-1] # deleting channels in our list
-    file = open("channels.txt", "w", encoding="utf8")
-    for i in channel_list:
+def delete_channels(arg1,guild_id):#deleting channel function
+
+    channel_lists = channel_list(guild_id)
+
+    del channel_lists[arg1-1] # deleting channels in our list
+    file = open(f"guilds/{guild_id}/channels.txt", "w", encoding="utf8")
+    for i in channel_lists:
         for j in range(0, 4):
             if j != 3:
                 file.write(str(i[j]) + ",")
@@ -77,8 +93,10 @@ def delete_channels(arg1):#deleting channel function
                 file.write(str(i[j]) + "\n")  # adding channels to txt file with a loop
     return True
 
-def emoji_list():
+def emoji_list(guild_id):
+    channel_lists = channel_list(guild_id)
     emoji_lists=[]
-    for i in channel_list: #getting emojis in our list. this will be help us on get index
+    print(f"lan {channel_lists}")
+    for i in channel_lists: #getting emojis in our list. this will be help us on get index
         emoji_lists.append(i[3])
     return emoji_lists

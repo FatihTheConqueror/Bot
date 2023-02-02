@@ -37,12 +37,7 @@ def channel_list(guild_id):
     except:
         pass
 
-
-
     return channel
-
-
-
 
 
 def command_channel_set(arg1,guild_id):
@@ -61,7 +56,7 @@ def add_channel1(arg1,arg2,arg3,arg4,guild_id):
 
 
     channel_lists.append([arg1,arg2,arg3,arg4]) #adding channels by a list to matris list
-    print(f"bak {channel_lists}")
+   
 
 
     file =open(f"guilds/{guild_id}/channels.txt","w",encoding="utf8")
@@ -96,7 +91,7 @@ def delete_channels(arg1,guild_id):#deleting channel function
 def emoji_list(guild_id):
     channel_lists = channel_list(guild_id)
     emoji_lists=[]
-    print(f"lan {channel_lists}")
+ 
     for i in channel_lists: #getting emojis in our list. this will be help us on get index
         emoji_lists.append(i[3])
     return emoji_lists

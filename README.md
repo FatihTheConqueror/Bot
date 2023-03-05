@@ -1,7 +1,7 @@
 Hi, I'm Fatih. I made a discord bot that archiving messeages to specific channel with emoji system.
 
 # Update:
-Bot has been updated. Now, you can add the bot many servers. The server information will be in guilds file.
+Bot has been updated. Now, you can add the bot many servers. The server information will be in guilds file. And DB (postgresql) has been added to "with_db" branch
 
 
 

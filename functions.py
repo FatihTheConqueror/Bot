@@ -1,97 +1,74 @@
 import os
+from db.config import cursor
 def file_create(Bot):
     for guild in Bot.guilds:
-        if not os.path.exists(f"guilds/{guild.id}"):
-            os.makedirs(f"guilds/{guild.id}")
-            file = open(f"guilds/{guild.id}/channels.txt", "w")
-            file.close()
-            file1 = open(f"guilds/{guild.id}/command_channel.txt", "w")
-            file1.close()
+        cursor.execute(f"""
+CREATE TABLE IF NOT EXISTS table_{guild.id}(
+from_channel VARCHAR,
+to_channel VARCHAR,
+count INTEGER,
+emoji VARCHAR,
+command_channel_id VARCHAR
+)
+
+""")
 
 
 def command_channel_list(guild_id):
-    file = open(f"guilds/{guild_id}/command_channel.txt", "r")
-    command_channel_list = file.readlines()
-    file.close()
-    return command_channel_list
+    
+
+    query = f"SELECT command_channel_id FROM table_{guild_id} WHERE command_channel_id IS NOT NULL"
+    cursor.execute(query)
+    return cursor.fetchall()
 
 
 #channel list
 def channel_list(guild_id):
-    file1 = open(f"guilds/{guild_id}/channels.txt", "r", encoding="utf8")
-    channel = file1.read().split("\n")
-
-    file1.close()
-
-    for i in range(len(channel)):
-        if channel[i] == "":
-            del channel[i]
-
-    for i in range(len(channel)):
-        channel[i] = channel[i].split(",")
-    try:
-        for i in range(len(channel)):
-            channel[i][0] = int(channel[i][0])
-            channel[i][1] = int(channel[i][1])
-            channel[i][2] = int(channel[i][2])
-    except:
-        pass
-
-    return channel
+    query = f"SELECT * FROM table_{guild_id} WHERE from_channel IS NOT NULL AND to_channel IS NOT NULL AND count IS NOT NULL AND emoji IS NOT NULL"
+    cursor.execute(query)
+    return cursor.fetchall()
 
 
 def command_channel_set(arg1,guild_id):
+    cursor.execute(f"""
+CREATE TABLE IF NOT EXISTS table_{guild_id}(
+from_channel VARCHAR,
+to_channel VARCHAR,
+count INTEGER,
+emoji VARCHAR,
+command_channel_id VARCHAR
+)
+
+""")
+
+    cursor.execute(f"""INSERT INTO table_{guild_id} (command_channel_id, from_channel, to_channel, count, emoji)
+VALUES (%s, %s, %s, %s, %s)""", (str(arg1), None, None, None, None))
 
 
-    file = open(f"guilds/{guild_id}/command_channel.txt", "w")
-    file.write(str(arg1)) #writing command channel id to our command channel text file
-    file.close()
 
 
 
 #define a function that adding parametres to txt file
 def add_channel1(arg1,arg2,arg3,arg4,guild_id):
-    channel_lists = channel_list(guild_id)
+   query = f"INSERT INTO table_{guild_id} (from_channel, to_channel, count, emoji, command_channel_id) VALUES (%s ,%s, %s, %s, %s)"
+   cursor.execute(query, (str(arg1), str(arg2), int(arg3), str(arg4), None))
 
 
 
-    channel_lists.append([arg1,arg2,arg3,arg4]) #adding channels by a list to matris list
-   
-
-
-    file =open(f"guilds/{guild_id}/channels.txt","w",encoding="utf8")
-    if len(channel_lists) != 0:
-        for i in channel_lists:
-            for j in range(0, 4):
-                if j != 3:
-                    file.write(str(i[j]) + ",")
-                if j == 3:
-                    file.write(str(i[j]) + "\n")  # adding channel to txt file
-    else:
-        file.write(f"{str(arg1)},{str(arg2)},{str(arg3)},{str(arg4)}")
-
-
-
-    file.close()
 
 def delete_channels(arg1,guild_id):#deleting channel function
-
-    channel_lists = channel_list(guild_id)
-
-    del channel_lists[arg1-1] # deleting channels in our list
-    file = open(f"guilds/{guild_id}/channels.txt", "w", encoding="utf8")
-    for i in channel_lists:
-        for j in range(0, 4):
-            if j != 3:
-                file.write(str(i[j]) + ",")
-            if j == 3:
-                file.write(str(i[j]) + "\n")  # adding channels to txt file with a loop
-    return True
+    query = f"""DELETE FROM table_{guild_id}
+WHERE ctid IN (
+  SELECT ctid
+  FROM table_{guild_id}
+  WHERE command_channel_id IS NOT NULL
+  ORDER BY ctid
+  OFFSET {arg1}
+  LIMIT 1
+)"""
+    cursor.execute(query)
 
 def emoji_list(guild_id):
-    channel_lists = channel_list(guild_id)
-    emoji_lists=[]
- 
-    for i in channel_lists: #getting emojis in our list. this will be help us on get index
-        emoji_lists.append(i[3])
-    return emoji_lists
+    query = f"SELECT emoji FROM table_{guild_id} WHERE emoji IS NOT NULL"
+    cursor.execute(query)
+    return cursor.fetchall()
